@@ -1,4 +1,7 @@
 import React from 'react'
+import TodoList from './TodoList';
+import Form from './Form';
+
 
 export default class App extends React.Component {
   constructor() {
@@ -25,6 +28,43 @@ export default class App extends React.Component {
   }
 
   // Other methods and render function can be added here
+  handleClear = () => {
+    this.setState({
+      ...this.state,
+      todos: this.state.todos.filter(todo => {
+        return (todo.completed === false)
+      })
+    })
+  }
+
+  handleAdd = (name) => {
+    const newTodo = {
+      name: name, // Use the value passed from the input field
+      id: Date.now(),
+      completed: false
+    };
+
+    this.setState({
+      ...this.state,
+      todos: [...this.state.todos, newTodo]
+    });
+  };
+
+
+handleToggle = (clickedId) => {
+  this.setState({
+    ...this.state,
+    todos: this.state.todos.map(todo => {
+      if (todo.id === clickedId){
+        return {
+          ...todo,
+          completed: !todo.completed
+        }
+      }
+      return todo
+    })
+  })
+}
 
 
   render() {
@@ -33,18 +73,9 @@ export default class App extends React.Component {
       <div>
         <h1>Todo App</h1>
 
-        <ul>
-          {
-            todos.map(todo => {
-              return (<li>{todo.name} {todo.completed?<span>- completed</span> : <span></span>}</li>)
-            })
-          }
-        </ul>
-        <form>
-          <input />
-          <button>Add</button>
-          </form>
-          <button>Clear</button>
+        <TodoList handleToggle={this.handleToggle} todos={todos} />
+        <Form handleAdd={this.handleAdd} />
+          <button onClick={this.handleClear}>Clear</button>
       </div>
     )
   }
